@@ -4,7 +4,9 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:8080'
+  bookingUrl: "http://localhost:8080/booking/",
+  containerUrl: "http://localhost:8080/container/",
+  loginUrl: "http://localhost:8080/login"
 };
 
 /*

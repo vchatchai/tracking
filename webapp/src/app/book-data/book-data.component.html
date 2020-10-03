@@ -1,0 +1,267 @@
+<div style="padding-top: 2em;width: 80vw;">
+
+    <div class="p-formgroup-inline p-d-flex  p-jc-center ">
+        <div class="p-field">
+            <label for="booking" class="p-sr-only">Booking Number</label>
+            <input id="booking" [(ngModel)]="bookingNumber" type="text" pInputText size="25"
+                placeholder="Booking Number">
+        </div>
+        <div class="p-field">
+            <button pButton type="button" label="Search" (click)="searchByBookingNumber($event)"></button>
+
+        </div>
+        <div class="p-field">
+
+            <button pButton type="button" label="Clear" (click)="clearBooking($event)"></button>
+
+        </div>
+    </div>
+    <div class="p-formgroup-inline p-d-flex  p-jc-center ">
+        <div class="p-field">
+            <label for="container" class="p-sr-only">Container Number</label>
+            <input id="container" [(ngModel)]="containerNumber" type="text" pInputText size="25"
+                placeholder="Container Number">
+        </div>
+        <div class="p-field">
+            <button pButton type="button" label="Search" (click)="searchBookByContainerNumber($event)"></button>
+
+        </div>
+        <div class="p-field">
+
+            <button pButton type="button" label="Clear" (click)="clearContainer($event)"></button>
+
+        </div>
+    </div>
+
+
+    <div *ngIf="!isEmpty && showResult">
+
+
+
+        <div class="p-formgroup-inline">
+            <div>
+                <div class="p-grid">
+                    <label for="booking" class="p-col-fixed" style="width:150px; text-align: right;"><B>Booking
+                            No:</B></label>
+                    <label for="booking" class="p-col-fixed" style="width:12vw">{{book.book_no}}</label>
+
+                </div>
+                <div class="p-grid">
+                    <label for="operator" class="p-col-fixed"
+                        style="width:150px; text-align: right;"><B>Operator:</B></label>
+                    <label for="operator" class="p-col-fixed" style="width:12vw">{{book.operator}}</label>
+
+                </div>
+                <div class="p-grid">
+                    <label for="customer" class="p-col-fixed"
+                        style="width:150px; text-align: right;"><B>Customer:</B></label>
+                    <label for="customer" class="p-col-fixed" style="width:50vw">{{book.customer}}</label>
+                </div>
+                <div class="p-grid">
+                    <label for="yoyage_no" class="p-col-fixed" style="width:150px; text-align: right;"><B>Yoyage
+                            No:</B></label>
+                    <label for="yoyage_no" class="p-col-fixed" style="width:12vw">{{book.yoyage_no}}</label>
+                </div>
+                <div class="p-grid">
+                    <label for="vessel_name" class="p-col-fixed" style="width:150px; text-align: right;"><B>Vessel
+                            Name:</B></label>
+                    <label for="vessel_name" class="p-col-fixed" style="width:12vw">{{book.vessel_name}}</label>
+                </div>
+                <div class="p-grid">
+                    <label for="destination" class="p-col-fixed" style="width:150px; text-align: right;"><B>Destination Port:</B></label>
+                    <label for="destination" class="p-col-fixed" style="width:12vw">{{book.destination}}</label>
+                </div>
+                <div class="p-grid">
+                    <label for="pickup_date" class="p-col-fixed" style="width:150px; text-align: right;"><B>Pickup
+                            Date:</B></label>
+                    <label for="pickup_date" class="p-col-fixed"
+                        style="width:12vw">{{book.pickup_date   | date:'dd/MM/yyyy'}}</label>
+                </div>
+                <!-- </div>
+
+
+            <div> -->
+                <!-- <div class="p-d-flex p-flex-column p-flex-md-row"> -->
+                <div class="p-grid">
+
+                    <label for="goods_description" class="p-col-fixed"
+                        style="width:150px; text-align: right;"><B>Goods&nbsp;Description:</B></label>
+                    <label for="goods_description" class="p-col-fixed" style="width:40vw">{{book.goods_description}}</label>
+                </div>
+                <!-- <div class="p-d-flex p-flex-column p-flex-md-row"> -->
+
+                <div class="p-grid">
+                    <label for="remark" class="p-col-fixed"
+                        style="width:150px; text-align: right;"><B>Remark:</B></label>
+                    <label for="remark" class="p-col-fixed" style="width:40vw">{{book.remark}}</label>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="p-field">
+            <p-table [value]="book.bookingContainerTypes">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Size/Type</th>
+                        <th>Quantity</th>
+                        <th>Available</th>
+                        <th>Total Out</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-t>
+                    <tr>
+                        <td>{{t.size}}/{{t.type}}</td>
+                        <td>{{t.quantity}}</td>
+                        <td>{{t.quantity - t.available}}</td>
+                        <td>{{t.total_out}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+
+        <div class="p-field">
+            <!-- <p-table [value]="book.bookingContainerDetails">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>No</th>
+                        <th>Container No</th>
+                        <th>Size/Type</th>
+                        <th>Seal No</th>
+                        <th>Trailer</th>
+                        <th>License</th>
+                        <th>Gate Out Date</th> 
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-d>
+                    <tr>
+                        <td>{{d.no}}</td>
+                        <td>{{d.no}}</td>
+                        <td>{{d.type}}</td>
+                        <td>{{d.seal_no}}</td>
+                        <td>{{d.trailer_name}}</td>
+                        <td>{{d.license}}</td>
+                        <td>{{d.gate_out_date  | date:'dd/MM/yyyy'}}</td> 
+                    </tr>
+                </ng-template>
+            </p-table> -->
+
+            <p-table [columns]="cols" [value]="book.bookingContainerDetails" [responsive]="true">
+
+                <ng-template pTemplate="caption">
+                    <div style="text-align: right">
+                        <i class="pi pi-search" style="margin:4px 4px 0 0"></i>
+                        <input type="text" pInputText [size]="inputSize" [(ngModel)]="searchText" (keyup)="globalSearch()"
+                            placeholder="Global Filter" style="width:auto">
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th *ngFor="let col of columns">
+                            &#123;&#123;col.header&#125;&#125;
+
+                        </th>
+                    </tr>
+                    <!-- <tr>
+                        <th *ngFor="let col of columns"> 
+
+                            <div class="p-input-filled">
+                                <input [(ngModel)]="inputSize" type="text" pInputText [size]="inputSize"  >
+                            </div>   
+                        </th>
+                    </tr> -->
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData  let-index="rowIndex" let-columns="columns">
+                    <tr>
+                        <!-- <td *ngFor="let col of columns | appFilter:searchText :rowData:state "> -->
+                        <td *ngFor="let col of columns ">
+                            <ng-template [ngIf]="col.field == 'gate_out_date'">
+                                <span class="ui-column-title">{{col.header}}</span>
+                                {{rowData[col.field] | date:'dd/MM/yyyy HH:mm ':'+0000'}}
+
+                            </ng-template>
+
+                            <ng-template [ngIf]="col.field == 'size'">
+                                <span class="ui-column-title">{{col.header}}</span>
+                                {{rowData['size'] }}/{{rowData['type'] }}
+
+
+                            </ng-template>
+                            <ng-template [ngIf]="col.field == 'no'"  >
+                                <span class="ui-column-title">{{col.header}}</span>
+                                <!-- {{countValue(count)}} -->
+                                <!-- {{rowData[col.field] }} -->
+                                {{index + 1}}  
+                            </ng-template>
+                            <ng-template [ngIf]="col.field != 'size' && col.field != 'gate_out_date' && col.field != 'no'">
+                                <span class="ui-column-title">&#123;&#123;col.header&#125;&#125;</span>
+                                {{rowData[col.field] }}
+
+
+                            </ng-template>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
+        </div>
+    </div>
+    <div *ngIf="isEmpty && showResult">
+
+        <div class="p-formgroup-inline p-d-flex  p-jc-center ">
+            <div class="p-field">
+                <div class="p-col p-col-align-start"></div>
+                <div class="p-col p-col-align-center"><b>{{emptyMessage}}</b></div>
+                <div class="p-col p-col-align-end"></div>
+
+            </div>
+        </div>
+
+
+
+        
+
+    </div>
+    <ng-go-top-button [animate]="true" [tabIndex]="10" [speed]="50" [acceleration]="2" [scrollDistance]="100">
+        Up
+    </ng-go-top-button>
+
+    <!-- <ng-go-top-button 
+                 [animate]="true"
+                 [speed]="50"
+                 [acceleration]="2"
+                 [scrollDistance]="300"
+                 [classNames]="'custom-class'"
+                 [styles]="{
+                    'border-radius': '20px 20px 20px 20px',
+                    'right': '5px',
+                    'color': 'green',
+                    'border': '5px solid',
+                    'line-height': '20px'
+                 }">
+        <i class='fa fa-arrow-up'></i>
+  </ng-go-top-button> -->
+    <!-- <div>
+    <p-table [value]="post">
+        <ng-template  pTemplate="header">
+            <tr>
+                <th>User ID</th>
+                <th>ID</th>
+                <th><Title></Title></th>
+                <th>Body</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-post>
+            <tr>
+                <td>{{post.userId}}</td>
+                <td>{{post.id}}</td>
+                <td>{{post.title}}</td>
+                <td>{{post.body}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div> -->
+</div>

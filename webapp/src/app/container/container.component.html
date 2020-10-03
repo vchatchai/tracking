@@ -1,0 +1,235 @@
+<div style="padding-top: 2em; width: 100%;">
+
+    <div class="p-formgroup-inline p-d-flex  p-jc-center ">
+        <div class="p-field">
+            <label for="booking" class="p-sr-only">Booking Number</label>
+            <input id="booking" [(ngModel)]="bookingNumber" type="text" pInputText size="22"
+                placeholder="Booking Number">
+        </div>
+        <div class="p-field">
+            <button pButton type="button" label="Search" (click)="searchByBooking($event)"></button> </div>
+        <div class="p-field">
+            <button pButton type="button" label="Clear" (click)="clearBooking($event)"></button>
+        </div>
+    </div>
+
+    <div class="p-formgroup-inline p-d-flex  p-jc-center ">
+        <div class="p-field">
+            <label for="container" class="p-sr-only">Container Number</label>
+            <input id="container" [(ngModel)]="containerNumber" type="text" pInputText size="22"
+                placeholder="Container Number">
+        </div>
+
+        <div class="p-field">
+            <button pButton type="button" label="Search" (click)="searchByContainer($event)"></button>
+        </div>
+        <div class="p-field">
+            <button pButton type="button" label="Clear" (click)="clearContainer($event)"></button>
+        </div>
+    </div>
+
+    <!-- <p-dataView [value]="containers">-->
+
+    <div *ngIf="!isEmpty && showResult">
+        <p-table [columns]="cols" [value]="containers" [responsive]="true" [autoLayout]="true">
+
+            <ng-template pTemplate="caption">
+                <div style="text-align: right">
+                    <i class="pi pi-search" style="margin:4px 4px 0 0"></i>
+                    <input type="text" pInputText [(ngModel)]="searchText"
+                        placeholder="Global Filter" style="width:auto">
+                </div>
+            </ng-template>
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th *ngFor="let col of columns">
+                        &#123;&#123;col.header&#125;&#125;
+
+                    </th>
+                </tr> 
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr>
+                    <td *ngFor="let col of columns | appFilter:searchText :rowData ">
+                        <ng-template [ngIf]="col.field == 'gate_out_date'">
+                            <span class="ui-column-title">{{col.header}}</span>
+                            {{rowData[col.field] | date:'dd/MM/yyyy'}}  
+
+                        </ng-template>
+                        <ng-template [ngIf]=" col.field == 'gate_in_date'">
+                            <span class="ui-column-title">{{col.header}}</span>
+                            {{rowData[col.field] | date:'dd/MM/yyyy'}}
+
+                        </ng-template>
+
+                        <ng-template [ngIf]="col.field == 'destination'" class="p-text-center p-text-nowrap">
+                            <span class="ui-column-title">{{col.header}}</span>
+                            {{rowData['destination'] }}/{{rowData['origin'] }}
+
+
+                        </ng-template>
+
+                        <ng-template [ngIf]="col.field == 'DIY'" class="p-text-center p-text-nowrap">
+                            <span class="ui-column-title">{{col.header}}</span>
+                            {{calculateDate(rowData['gate_out_date'],rowData['gate_in_date'])  }}  
+
+
+                        </ng-template>
+
+
+
+                        <ng-template [ngIf]="col.field != 'destination' && col.field != 'gate_out_date' && col.field != 'gate_in_date'"
+                            class="p-text-center p-text-nowrap">
+                            <span class="ui-column-title">&#123;&#123;col.header&#125;&#125;</span>
+                            
+                            <div class="p-text-nowrap" style="width: 100%">{{rowData[col.field] }}</div>
+
+                            <!-- <label for="lastname3" class="p-col-fixed" style="width:12vw">{{rowData[col.field] }}</label> -->
+                        </ng-template>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+
+        <!-- 
+            <ng-template let-container  ngFor [ngForOf]="containers"  > 
+                <p-card styleClass="ui-card-shadow shadow-box ui-shadow-5">
+             
+                    <div class="p-d-flex p-flex-column p-flex-md-row p-jc-center ">
+                        <div>
+                            <div class="p-d-flex">
+                                <label for="no"
+                                    class="p-field p-mr-2  label-field"><B>Container&nbsp;No&nbsp;:</B></label>
+                                <label for="no" class="p-field p-mr-2 data-field">{{container.container_no}}</label>
+
+                            </div>
+                            <div class="p-d-flex">
+                                <label for="size" class="p-field p-mr-2 label-field"><B>Size&nbsp;:</B></label>
+                                <label for="size" class="p-field p-mr-2">{{container.size}}</label>
+
+                            </div>
+                            <div class="p-d-flex">
+                                <label for="type" class="p-field p-mr-2 label-field"><B>Type&nbsp;:</B></label>
+                                <label for="type" class="p-field p-mr-2">{{container.type}}</label>
+                            </div>
+                            <div class="p-d-flex">
+                                <label for="bookingno" class="p-field p-mr-2  label-field"><B>Booking&nbsp;No&nbsp;:
+                                    </B></label>
+                                <label for="bookingno" class="p-field p-mr-2">{{container.booking_no}}</label>
+                            </div>
+                            <div class="p-d-flex">
+                                <label for="seal" class="p-field p-mr-2 label-field"><B>Seal&nbsp;No&nbsp;:</B></label>
+                                <label for="seal" class="p-field p-mr-2">{{container.seal_no}}</label>
+                            </div>
+                            <div class="p-d-flex">
+                                <label for="customer" class="p-field p-mr-2 label-field"><B>Customer&nbsp;:</B></label>
+                                <label for="customer" class="p-field p-mr-2">{{container.customer}}</label>
+                            </div>
+                            <div class="p-d-flex">
+                                <label for="ld" class="p-field p-mr-2 label-field"><B>LD&nbsp;Code&nbsp;:</B></label>
+                                <label for="ld" class="p-field p-mr-2">{{container.ld_code}}</label>
+                            </div>
+                            <div class="p-d-flex">
+                                <label for="origin"
+                                    class="p-field p-mr-2 label-field"><B>Origin/Destination&nbsp;:</B></label>
+                                <label for="origin"
+                                    class="p-field p-mr-2">{{container.origin}}/{{container.destination}}</label>
+                            </div>
+                            <div class="p-d-flex">
+                                <label for="vessel" class="p-field p-mr-2 label-field"><B>Vessel&nbsp;:</B></label>
+                                <label for="vessel" class="p-field p-mr-2">{{container.vessel}}</label>
+                            </div>
+                            <div class="p-d-flex">
+                                <label for="voyage" class="p-field p-mr-2 label-field"><B>Voyage
+                                        No&nbsp;:</B></label>
+                                <label for="voyage" class="p-field p-mr-2">{{container.voyage_no}}</label>
+                            </div>
+                            <div class="p-d-flex">
+                                <label for="renban" class="p-field p-mr-2 label-field"><B>Renban&nbsp;:</B></label>
+                                <label for="renban" class="p-field p-mr-2">{{container.renban}}</label>
+                            </div>
+                            <div class="p-d-flex">
+                                <label for="cy_date" class="p-field p-mr-2 label-field"><B>CY Date&nbsp;:</B></label>
+                                <label for="cy_date"
+                                    class="p-field p-mr-2">{{container.cy_date| date:'dd/MM/yyyy'}}</label>
+                            </div>
+
+                        </div>
+                        <div>
+                            <div class="p-d-flex">
+                                <label for="gatein" class="p-field p-mr-2" style="text-align: left;"><B>GateIn
+                                    </B></label>
+                                <label for="gatein" class="p-field p-mr-2 label-field" style="width:10vw">&nbsp;</label>
+                            </div>
+                            <div class="p-d-flex">
+                                <label for="gate_in_trailer_name"
+                                    class="p-field p-mr-2 label-field"><B>Trailer&nbsp;Name&nbsp;:</B></label>
+                                <label for="gate_in_trailer_name"
+                                    class="p-field p-mr-2">{{container.gate_in_trailer_name}}</label>
+                            </div>
+                            <div class="p-d-flex">
+                                <label for="gate_in_license"
+                                    class="p-field p-mr-2 label-field"><B>License&nbsp;:</B></label>
+                                <label for="gate_in_license"
+                                    class="p-field p-mr-2">{{container.gate_in_license}}</label>
+                            </div>
+                            <div class="p-d-flex">
+                                <label for="gate_in_date"
+                                    class="p-field p-mr-2 label-field"><B>Gate&nbsp;In&nbsp;Date&nbsp;:</B></label>
+                                <label for="gate_in_date"
+                                    class="p-field p-mr-2">{{container.gate_in_date| date:'dd/MM/yyyy'}}</label>
+                            </div>
+                            <div class="p-d-flex">
+                                <label for="gate_in_location"
+                                    class="p-field p-mr-2 label-field"><B>Location&nbsp;:</B></label>
+                                <label for="gate_in_location"
+                                    class="p-field p-mr-2">{{container.gate_in_location}}</label>
+                            </div>
+                            <div class="p-d-flex">
+                                <label for="getout" class="p-field p-mr-2" style=" text-align: left;"><B>GateOut
+                                    </B></label>
+                                <label for="getout" class="p-field p-mr-2 label-field">&nbsp;</label>
+                            </div>
+                            <div class="p-d-flex">
+                                <label for="gate_out_trailer_name"
+                                    class="p-field p-mr-2 label-field"><B>Trailer&nbsp;Name&nbsp;:</B></label>
+                                <label for="gate_out_trailer_name"
+                                    class="p-field p-mr-2">{{container.gate_out_trailer_name}}</label>
+                            </div>
+                            <div class="p-d-flex">
+                                <label for="gate_out_license"
+                                    class="p-field p-mr-2 label-field"><B>License&nbsp;:</B></label>
+                                <label for="gate_out_license"
+                                    class="p-field p-mr-2">{{container.gate_out_license}}</label>
+                            </div>
+                            <div class="p-d-flex">
+                                <label for="gate_out_date"
+                                    class="p-field p-mr-2 label-field"><B>Gate&nbsp;Out&nbsp;Date&nbsp;:</B></label>
+                                <label for="gate_out_date"
+                                    class="p-field p-mr-2">{{container.gate_out_date| date:'dd/MM/yyyy'}}</label>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                </p-card>
+                <br/>
+            </ng-template>-->
+    </div>
+
+    <div *ngIf="isEmpty && showResult">
+
+        <div class="p-formgroup-inline p-d-flex  p-jc-center ">
+            <div class="p-field">
+                <div class="p-col p-col-align-start"></div>
+                <div class="p-col p-col-align-center"><b>{{emptyMessage}}</b></div>
+                <div class="p-col p-col-align-end"></div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- </p-dataView> -->
+</div>

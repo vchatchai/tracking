@@ -1,0 +1,20 @@
+<p-messages severity="error" [(value)]="message" [closable]="false"></p-messages>
+<div class="p-d-inline  p-jc-center  ">
+
+
+    <div class="p-field  p-jc-center  ">
+        <label for="username" class="p-col-fixed" style="width:100px"><b>UserName</b></label>
+
+        <input id="username" [(ngModel)]="username" type="text" pInputText>
+
+    </div>
+    <div class="p-field p-jc-center">
+        <label for="password" class="p-col-fixed" style="width:100px"><b>Password</b></label>
+        <input [(ngModel)]="password" type="password" [feedback]=false pPassword (keyup.enter)="login()" />
+
+    </div>
+    <div class="p-field  p-text-right">
+        <button pButton type="button" (click)="login()" label="Login"></button>
+
+    </div>
+</div>

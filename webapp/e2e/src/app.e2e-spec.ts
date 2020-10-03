@@ -8,9 +8,9 @@ describe('workspace-project App', () => {
     page = new AppPage();
   });
 
-  it('should display project name', () => {
+  it('should display welcome message', () => {
     page.navigateTo();
-    expect(page.getTitleText()).toEqual('tracking');
+    expect(page.getTitleText()).toEqual('primeface app is running!');
   });
 
   afterEach(async () => {
