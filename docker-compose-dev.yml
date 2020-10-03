@@ -2,12 +2,20 @@ version: "3.7"
 services:
   dev_db:
     image: mysql:8.0
-    environment:
+    onmen:
       MYSQL_DATABASE: goxygen
       MYSQL_USER: goxygen
       MYSQL_PASSWORD: pass
       MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+      TRACKING_DATABASE_DEBUG: true
+      TRACKING_DATABASE_PASSWORD: Manager1
+      TRACKING_DATABASE_PORT: 1433
+      TRACKING_DATABASE_ADDRESS: 192.168.1.115
+      TRACKING_DATABASE_USER: tracking
+      TRACKING_DATABASE_NAME: tracking
     ports:
       - 3306:3306
     volumes:
       - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
+
+

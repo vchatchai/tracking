@@ -4,19 +4,27 @@ services:
     build: .
     container_name: app
     ports:
-      - 8080:8080
-    depends_on:
-      - db
+      - 80:8080
+#    depends_on:
+#      - db
     environment:
       profile: prod
       db_pass: pass
-  db:
-    image: mysql:8.0
-    container_name: db
-    environment:
-      MYSQL_DATABASE: goxygen
-      MYSQL_USER: goxygen
-      MYSQL_PASSWORD: pass
-      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
-    volumes:
-      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
+      TRACKING_DATABASE_DEBUG: "true"
+      TRACKING_DATABASE_PASSWORD: Manager1
+      TRACKING_DATABASE_PORT: 1433
+      TRACKING_DATABASE_ADDRESS: 192.168.1.115
+      TRACKING_DATABASE_USER: tracking
+      TRACKING_DATABASE_NAME: tracking      
+#  db:
+#    image: mysql:8.0
+#    container_name: db
+#    environment:
+#      MYSQL_DATABASE: goxygen
+#      MYSQL_USER: goxygen
+#      MYSQL_PASSWORD: pass
+#      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+#    volumes:
+#      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
+
+
