@@ -51,14 +51,14 @@
             <ng-template pTemplate="body" let-rowData let-columns="columns">
                 <tr>
                     <td *ngFor="let col of columns | appFilter:searchText :rowData ">
-                        <ng-template [ngIf]="col.field == 'gate_out_date'">
+                        <ng-template [ngIf]="col.field == 'gate_out_date'" class="p-text-center p-text-nowrap">
                             <span class="ui-column-title">{{col.header}}</span>
-                            {{rowData[col.field] | date:'dd/MM/yyyy'}}  
+                            {{rowData[col.field] | date:'dd/MM/yyyy&nbsp;HH:mm ':'+0000'}}  
 
                         </ng-template>
-                        <ng-template [ngIf]=" col.field == 'gate_in_date'">
+                        <ng-template [ngIf]=" col.field == 'gate_in_date'" class="p-text-center p-text-nowrap">
                             <span class="ui-column-title">{{col.header}}</span>
-                            {{rowData[col.field] | date:'dd/MM/yyyy'}}
+                            {{rowData[col.field] | date:'dd/MM/yyyy&nbsp;HH:mm ':'+0000'}}
 
                         </ng-template>
 
@@ -69,6 +69,12 @@
 
                         </ng-template>
 
+                        <ng-template [ngIf]="col.field == 'type'" class="p-text-center p-text-nowrap">
+                            <span class="ui-column-title">{{col.header}}</span>
+                            {{rowData['size'] }}/{{rowData['type'] }}
+
+
+                        </ng-template>
                         <ng-template [ngIf]="col.field == 'DIY'" class="p-text-center p-text-nowrap">
                             <span class="ui-column-title">{{col.header}}</span>
                             {{calculateDate(rowData['gate_out_date'],rowData['gate_in_date'])  }}  
@@ -78,7 +84,7 @@
 
 
 
-                        <ng-template [ngIf]="col.field != 'destination' && col.field != 'gate_out_date' && col.field != 'gate_in_date'"
+                        <ng-template [ngIf]="col.field != 'destination' && col.field != 'gate_out_date' && col.field != 'gate_in_date' && col.field != 'type'"
                             class="p-text-center p-text-nowrap">
                             <span class="ui-column-title">&#123;&#123;col.header&#125;&#125;</span>
                             
