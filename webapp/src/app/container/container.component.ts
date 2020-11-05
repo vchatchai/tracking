@@ -18,7 +18,7 @@ export class ContainerComponent implements OnInit {
       { field: 'booking_no', header: 'Booking No/BL No' },
       { field: 'container_no', header: 'Container No.' },
       { field: 'seal_no', header: 'Seal No.' },
-      { field: 'type', header: 'Container types' },
+      { field: 'type', header: 'Size/Type' },
       { field: 'vessel', header: 'Vessel' },
       { field: 'voyage_no', header: 'VoyageNo' },
       { field: 'gate_in_date', header: 'Gate in' },
@@ -102,12 +102,31 @@ export class ContainerComponent implements OnInit {
   }
 
   calculateDate(date1: Date, date2: Date) {
+    
+    console.log('date1',date1)
 
+    console.log('date2',date2)
+    if(date1 == null) {
+      
+      date1 = new Date();
+    }
+
+    if(date2 == null) {
+      date2 = new Date();
+    }
+    
     date1 = new Date(date1);
-
+    
     date2 = new Date(date2);
+    
+        console.log('nextdate1',date1)
+    
+        console.log('nextdate2',date2)
  
-    var diffDays: any =  new Date(date1.getTime() - date2.getTime()).getDate();  // Math.floor((Number(date1) - Number(date2)) / (1000 * 60 * 60 * 24));
+    // var diffDays: any =  new Date(date1.getTime() - date2.getTime()).;  // Math.floor((Number(date1) - Number(date2)) / (1000 * 60 * 60 * 24));
+    var diffDays: any = Math.floor((Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate()) - Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate()) ) /(1000 * 60 * 60 * 24));
+    diffDays = diffDays + 1;
+    console.log(diffDays)
     return diffDays;
   }
 }
