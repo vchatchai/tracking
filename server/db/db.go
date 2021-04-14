@@ -8,6 +8,7 @@ import (
 	model "tracking/model"
 
 	_ "github.com/denisenkom/go-mssqldb"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type DB interface {
