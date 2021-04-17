@@ -29,7 +29,7 @@ func main() {
 	// Remaining web.environment variables.
 	web.Environment.Extras = es
 
-	d, err := sql.Open("sqlserver", dataSource())
+	d, err := sql.Open("mysql", dataSource())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -59,8 +59,13 @@ func dataSource() string {
 		fmt.Printf(" user:%s\n", web.Environment.User)
 		fmt.Printf(" database:%s\n", web.Environment.Database)
 	}
+	// username:password@protocol(address)/dbname?param=value
 
-	connString := fmt.Sprintf("server=%s;user id=%s;password=%s;port=%d;database=%s;encrypt=disable", web.Environment.Server, web.Environment.User, web.Environment.Password, web.Environment.DatabasePort, web.Environment.Database)
+	// %s:%s@tcp(%s:%s)/%s
+	// %s:%s@protocol(address)/dbname?param=value
+	// username:password@tcp(127.0.0.1:3306)/test
+
+	connString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", web.Environment.User, web.Environment.Password, web.Environment.Server, web.Environment.DatabasePort, web.Environment.Database)
 	if web.Environment.Debug {
 		fmt.Printf(" connString:%s\n", connString)
 	}
