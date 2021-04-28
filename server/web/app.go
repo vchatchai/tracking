@@ -3,6 +3,7 @@ package web
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"tracking/db"
@@ -22,15 +23,21 @@ func NewApp(d db.DB, cors bool) App {
 		d:        d,
 		handlers: make(map[string]http.HandlerFunc),
 	}
-
 	bookingHandler := app.GetBooking
+	bookingRefreshHandler := app.RefreshBooking
 	containerHandler := app.GetContainner
+	containerRefreshHandler := app.RefreshContainer
 	loginHandler := app.Login
+	loginRefreshHandler := app.RefreshLogin
 	if !cors {
 		bookingHandler = disableCors(bookingHandler)
 		containerHandler = disableCors(containerHandler)
 		loginHandler = disableCors(loginHandler)
 	}
+
+	app.handlers["/refresh/booking"] = bookingRefreshHandler
+	app.handlers["/refresh/container"] = containerRefreshHandler
+	app.handlers["/refresh/login"] = loginRefreshHandler
 
 	app.handlers["/booking/"] = bookingHandler
 	app.handlers["/container/"] = containerHandler
@@ -146,9 +153,87 @@ func (a *App) Login(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func (a *App) RefreshBooking(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	var bookings []*model.Booking
+
+	err := json.NewDecoder(r.Body).Decode(&bookings)
+
+	if err != nil {
+		sendErr(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err = a.d.RefreshBooking(bookings)
+
+	if err != nil {
+		sendErr(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	// fmt.Fprintln(io.)
+	// json.NewDecoder(r.Body).Decode(book)
+	fmt.Println("Test RefreshBooking")
+	data, _ := ioutil.ReadAll(r.Body)
+	println(string(data))
+
+}
+
+func (a *App) RefreshContainer(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	var containers []*model.LadenContainer
+
+	err := json.NewDecoder(r.Body).Decode(&containers)
+
+	if err != nil {
+		sendErr(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err = a.d.RefreshContainer(containers)
+
+	if err != nil {
+		sendErr(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	fmt.Println("Test RefreshContainer")
+	data, _ := ioutil.ReadAll(r.Body)
+	println(string(data))
+}
+
+func (a *App) RefreshLogin(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	var users []*model.User
+
+	err := json.NewDecoder(r.Body).Decode(&users)
+	if err != nil {
+		sendErr(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err = a.d.RefreshLogin(users)
+
+	if err != nil {
+		sendErr(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	// fmt.Fprintln(io.)
+	// json.NewDecoder(r.Body).Decode(book)
+	fmt.Println("Test RefreshLogin")
+	data, _ := ioutil.ReadAll(r.Body)
+	println(string(data))
+}
+
 func sendErr(w http.ResponseWriter, code int, message string) {
 	resp, _ := json.Marshal(map[string]string{"error": message})
 	http.Error(w, string(resp), code)
+	log.Println(string(resp))
+
 }
 
 // Needed in order to disable CORS for local development

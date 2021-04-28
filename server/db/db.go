@@ -17,6 +17,16 @@ type DB interface {
 	GetBookingByBookingNumber(bookingNumber string) (*model.Booking, error)
 	GetBookingByContainerNumber(containerNumber string) (*model.Booking, error)
 	Login(user, password string) (*model.User, error)
+	ClearBooking(tx *sql.Tx) error
+	ClearContainer(tx *sql.Tx) error
+	ClearLogin(tx *sql.Tx) error
+	InsertBooking(tx *sql.Tx, bookings []*model.Booking) error
+	InsertContainer(tx *sql.Tx, ladenContainers []*model.LadenContainer) error
+	InsertLogin(tx *sql.Tx, users []*model.User) error
+
+	RefreshBooking([]*model.Booking) error
+	RefreshContainer([]*model.LadenContainer) error
+	RefreshLogin([]*model.User) error
 }
 
 type SQLDB struct {
@@ -217,7 +227,7 @@ SELECT [container_no]
            ,[gate_out_trailer_name]
            ,[gate_out_license]
 		   ,[gate_out_date] 
-FROM dbo.laden_container
+FROM tracking.laden_container
 WHERE [book_no] = @BOOKNO		 
 ORDER BY gate_in_date DESC  
 `
@@ -294,7 +304,7 @@ SELECT top 1 [container_no]
            ,[gate_out_trailer_name]
            ,[gate_out_license]
 		   ,[gate_out_date] 
-FROM dbo.laden_container
+FROM tracking.laden_container
 WHERE [container_no] = @CONTAINERNO  
 ORDER BY gate_in_date DESC
  
@@ -350,7 +360,7 @@ func (d SQLDB) GetContainerContainerNumber(containerNumber string) ([]*model.Lad
 
 var queryLogin = `
 SELECT username
-FROM dbo.laden_container_user
+FROM tracking.laden_container_user
 WHERE username = @USER AND password = @PASSWORD
 `
 
@@ -386,4 +396,148 @@ func (d SQLDB) Login(userName, password string) (*model.User, error) {
 	}
 
 	return user, nil
+}
+
+var clearLogin = `DELETE FROM tracking.laden_container_user`
+
+func (d SQLDB) ClearLogin(tx *sql.Tx) error {
+
+	_, err := d.db.Exec(clearLogin) // OK
+
+	if err != nil {
+		fmt.Printf("error %s\n", err)
+		return err
+	}
+
+	return nil
+}
+
+var clearBooking = `DELETE FROM tracking.booking_header`
+
+func (d SQLDB) ClearBooking(tx *sql.Tx) error {
+
+	_, err := d.db.Exec(clearLogin) // OK
+
+	if err != nil {
+		fmt.Printf("error %s\n", err)
+		return err
+	}
+
+	return nil
+
+}
+
+var clearContainer = `DELETE FROM tracking.laden_container`
+
+func (d SQLDB) ClearContainer(tx *sql.Tx) error {
+
+	_, err := d.db.Exec(clearLogin) // OK
+
+	if err != nil {
+		fmt.Printf("error %s\n", err)
+		return err
+	}
+
+	return nil
+
+}
+
+var insertBooking = `INSERT INTO users(name) VALUES(?)`
+
+func (d SQLDB) InsertBooking(tx *sql.Tx, bookings []*model.Booking) error {
+	stmt, err := d.db.Prepare(insertBooking)
+	if err != nil {
+		log.Fatal(err)
+	}
+	res, err := stmt.Exec("Dolly")
+	if err != nil {
+		log.Fatal(err)
+	}
+	lastId, err := res.LastInsertId()
+	if err != nil {
+		log.Fatal(err)
+	}
+	rowCnt, err := res.RowsAffected()
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("ID = %d, affected = %d\n", lastId, rowCnt)
+	return nil
+}
+
+var insertContainer = `INSERT INTO laden_container(name) VALUES(?)`
+
+func (d SQLDB) InsertContainer(tx *sql.Tx, ladenContainers []*model.LadenContainer) error {
+
+	return nil
+}
+
+var insertLogin = `INSERT INTO users(name) VALUES(?)`
+
+func (d SQLDB) InsertLogin(tx *sql.Tx, users []*model.User) error {
+	stmt, err := tx.Prepare("INSERT INTO foo VALUES (?)")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close() // danger!
+	for i := 0; i < 10; i++ {
+		_, err = stmt.Exec(i)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	return nil
+}
+
+func (d SQLDB) RefreshBooking(bookings []*model.Booking) error {
+	tx, err := d.db.Begin()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer tx.Rollback()
+
+	d.ClearBooking(tx)
+	d.InsertBooking(tx, bookings)
+
+	err = tx.Commit()
+	if err != nil {
+		log.Fatal(err)
+	}
+	// stmt.Close() runs here!
+	return nil
+}
+func (d SQLDB) RefreshContainer(ladenContainers []*model.LadenContainer) error {
+	tx, err := d.db.Begin()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer tx.Rollback()
+
+	d.ClearContainer(tx)
+	d.InsertContainer(tx, ladenContainers)
+
+	err = tx.Commit()
+	if err != nil {
+		log.Fatal(err)
+	}
+	// stmt.Close() runs here!
+	return nil
+}
+func (d SQLDB) RefreshLogin(users []*model.User) error {
+	tx, err := d.db.Begin()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer tx.Rollback()
+
+	d.ClearLogin(tx)
+	d.InsertLogin(tx, users)
+
+	err = tx.Commit()
+	if err != nil {
+		log.Fatal(err)
+	}
+	// stmt.Close() runs here!
+	return nil
 }

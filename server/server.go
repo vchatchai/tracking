@@ -65,7 +65,7 @@ func dataSource() string {
 	// %s:%s@protocol(address)/dbname?param=value
 	// username:password@tcp(127.0.0.1:3306)/test
 
-	connString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", web.Environment.User, web.Environment.Password, web.Environment.Server, web.Environment.DatabasePort, web.Environment.Database)
+	connString := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", web.Environment.User, web.Environment.Password, web.Environment.Server, web.Environment.DatabasePort, web.Environment.Database)
 	if web.Environment.Debug {
 		fmt.Printf(" connString:%s\n", connString)
 	}
