@@ -28,7 +28,7 @@ func NewApp(d db.DB, cors bool) App {
 	containerHandler := app.GetContainner
 	containerRefreshHandler := app.RefreshContainer
 	loginHandler := app.Login
-	loginRefreshHandler := app.RefreshLogin
+	loginRefreshHandler := app.RefreshUser
 	if !cors {
 		bookingHandler = disableCors(bookingHandler)
 		containerHandler = disableCors(containerHandler)
@@ -37,7 +37,7 @@ func NewApp(d db.DB, cors bool) App {
 
 	app.handlers["/refresh/booking"] = bookingRefreshHandler
 	app.handlers["/refresh/container"] = containerRefreshHandler
-	app.handlers["/refresh/login"] = loginRefreshHandler
+	app.handlers["/refresh/user"] = loginRefreshHandler
 
 	app.handlers["/booking/"] = bookingHandler
 	app.handlers["/container/"] = containerHandler
@@ -53,7 +53,7 @@ func (a *App) Serve() error {
 
 	port := fmt.Sprintf(":%d", Environment.HttpPort)
 	if Environment.HttpPort == 0 {
-		port = ":8080"
+		port = ":8081"
 	}
 	log.Println("Web server is available on port :", port)
 	return http.ListenAndServe(port, nil)
@@ -156,14 +156,28 @@ func (a *App) Login(w http.ResponseWriter, r *http.Request) {
 func (a *App) RefreshBooking(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
+	apiKey := r.Header.Get("x-api-key")
+
+	fmt.Println("APIKEY:", apiKey)
+
+	fmt.Println("Test RefreshBooking")
+	data, _ := ioutil.ReadAll(r.Body)
+	// println(string(data))
+
 	var bookings []*model.Booking
 
-	err := json.NewDecoder(r.Body).Decode(&bookings)
+	// err := json.NewDecoder(r.Body).Decode(&bookings)
+	err := json.Unmarshal([]byte(data), &bookings)
 
 	if err != nil {
 		sendErr(w, http.StatusBadRequest, err.Error())
 		return
 	}
+	// fmt.Println("bookings len", len(bookings))
+	// for _, booking := range bookings {
+	// 	// 	return
+	// 	fmt.Println("booking:", booking)
+	// }
 
 	err = a.d.RefreshBooking(bookings)
 
@@ -174,18 +188,21 @@ func (a *App) RefreshBooking(w http.ResponseWriter, r *http.Request) {
 
 	// fmt.Fprintln(io.)
 	// json.NewDecoder(r.Body).Decode(book)
-	fmt.Println("Test RefreshBooking")
-	data, _ := ioutil.ReadAll(r.Body)
-	println(string(data))
 
 }
 
 func (a *App) RefreshContainer(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	apiKey := r.Header.Get("x-api-key")
+
+	fmt.Println("APIKEY:", apiKey)
+	data, _ := ioutil.ReadAll(r.Body)
+	// println(string(data))
 
 	var containers []*model.LadenContainer
 
-	err := json.NewDecoder(r.Body).Decode(&containers)
+	// err := json.NewDecoder(r.Body).Decode(&containers)
+	err := json.Unmarshal([]byte(data), &containers)
 
 	if err != nil {
 		sendErr(w, http.StatusBadRequest, err.Error())
@@ -199,34 +216,45 @@ func (a *App) RefreshContainer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("Test RefreshContainer")
-	data, _ := ioutil.ReadAll(r.Body)
-	println(string(data))
+	fmt.Println("LadenContainer refreshed")
+
 }
 
-func (a *App) RefreshLogin(w http.ResponseWriter, r *http.Request) {
+func (a *App) RefreshUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	apiKey := r.Header.Get("x-api-key")
+
+	fmt.Println("APIKEY:", apiKey)
+	data, _ := ioutil.ReadAll(r.Body)
+	println(string(data))
 
 	var users []*model.User
 
-	err := json.NewDecoder(r.Body).Decode(&users)
+	// err := json.NewDecoder(r.Body).Decode(&users)
+	err := json.Unmarshal([]byte(data), &users)
 	if err != nil {
 		sendErr(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	err = a.d.RefreshLogin(users)
+	fmt.Println("user len", len(users))
+	// for _, user := range users {
+	// 	// 	return
+	// 	fmt.Println("User:", user)
+	// }
+
+	err = a.d.RefreshUser(users)
 
 	if err != nil {
 		sendErr(w, http.StatusBadRequest, err.Error())
 		return
 	}
+
+	fmt.Println("user refreshed")
 
 	// fmt.Fprintln(io.)
 	// json.NewDecoder(r.Body).Decode(book)
-	fmt.Println("Test RefreshLogin")
-	data, _ := ioutil.ReadAll(r.Body)
-	println(string(data))
+
 }
 
 func sendErr(w http.ResponseWriter, code int, message string) {

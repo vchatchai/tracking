@@ -12,9 +12,6 @@ import (
 type MyNullString struct {
 	sql.NullString
 }
-type MyNullTime struct {
-	sql.NullTime
-}
 
 func (ns MyNullString) MarshalJSON() ([]byte, error) {
 	if ns.Valid {
@@ -23,11 +20,73 @@ func (ns MyNullString) MarshalJSON() ([]byte, error) {
 	return []byte(`null`), nil
 }
 
+func (ns *MyNullString) UnmarshalJSON(b []byte) error {
+	if "null" == string(b) {
+		ns.Valid = false
+	} else {
+
+		err := json.Unmarshal(b, &ns.String)
+
+		if err != nil {
+			return err
+		} else {
+			ns.Valid = true
+		}
+	}
+
+	return nil
+
+}
+
+func (ns *MyNullString) Value() interface{} {
+
+	if ns.Valid {
+		return ns.String
+	} else {
+		return ns.NullString
+	}
+}
+
+type MyNullTime struct {
+	sql.NullTime
+}
+
 func (n MyNullTime) MarshalJSON() ([]byte, error) {
 	if n.Valid {
 		return json.Marshal(n.Time)
 	}
 	return []byte(`null`), nil
+
+}
+
+func (ns *MyNullTime) UnmarshalJSON(b []byte) error {
+
+	if "null" == string(b) {
+		ns.Valid = false
+	} else {
+
+		err := json.Unmarshal(b, &ns.Time)
+
+		if err != nil {
+			ns.Valid = false
+			return err
+		} else {
+			ns.Valid = true
+		}
+
+	}
+
+	return nil
+
+}
+
+func (ns *MyNullTime) Value() interface{} {
+
+	if ns.Valid {
+		return ns.Time
+	} else {
+		return ns.NullTime
+	}
 
 }
 

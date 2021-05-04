@@ -21,7 +21,7 @@ type Booking struct {
 
 type BookingContainerType struct {
 	BookNo    MyNullString `json:"book_no,string"`
-	Size      int          `json:"size,string"`
+	Size      int          `json:"size"`
 	Type      MyNullString `json:"type"`
 	Quantity  int          `json:"quantity"`
 	Available int          `json:"available"`

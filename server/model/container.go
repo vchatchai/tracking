@@ -1,8 +1,9 @@
 package model
 
 type User struct {
-	User MyNullString `json:"user,string"`
-	ID   MyNullString `json:"id,string"`
+	Password MyNullString `json:"password,string"`
+	User     MyNullString `json:"user,string"`
+	ID       MyNullString `json:"id,string"`
 }
 
 type LadenContainer struct {
@@ -18,14 +19,14 @@ type LadenContainer struct {
 	Vessel      MyNullString `json:"vessel,string"`
 	VoyageNo    MyNullString `json:"voyage_no,string"`
 	Renban      MyNullString `json:"renban,string"`
-	CYDate      MyNullTime   `json:"cy_date"`
+	CYDate      MyNullTime   `json:"cy_date,omitempty"`
 
 	GateInTrailerName MyNullString `json:"gate_in_trailer_name,string"`
 	GateInLicense     MyNullString `json:"gate_in_license,string"`
-	GateInDate        MyNullTime   `json:"gate_in_date"`
+	GateInDate        MyNullTime   `json:"gate_in_date,omitempty"`
 	GateInLocation    MyNullString `json:"gate_in_location,string"`
 
 	GateOutTrailerName MyNullString `json:"gate_out_trailer_name,string"`
 	GateOutLicense     MyNullString `json:"gate_out_license,string"`
-	GateOutDate        MyNullTime   `json:"gate_out_date"`
+	GateOutDate        MyNullTime   `json:"gate_out_date,omitempty"`
 }
