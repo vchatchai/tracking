@@ -6,9 +6,10 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"tracking/db"
-	"tracking/generate"
-	"tracking/model"
+
+	"github.com/vchatchai/tracking/server/db"
+	"github.com/vchatchai/tracking/server/generate"
+	"github.com/vchatchai/tracking/server/model"
 )
 
 type App struct {
@@ -74,6 +75,10 @@ func (a *App) GetContainner(w http.ResponseWriter, r *http.Request) {
 
 		booking, err := a.d.GetContainerByBookingNumber(key)
 
+		if err != nil {
+			sendErr(w, http.StatusInternalServerError, err.Error())
+		}
+
 		err = json.NewEncoder(w).Encode(booking)
 		if err != nil {
 			sendErr(w, http.StatusInternalServerError, err.Error())
@@ -88,6 +93,9 @@ func (a *App) GetContainner(w http.ResponseWriter, r *http.Request) {
 		log.Println("GetContainner 'containerNumber' is: " + string(key))
 
 		booking, err := a.d.GetContainerContainerNumber(key)
+		if err != nil {
+			sendErr(w, http.StatusInternalServerError, err.Error())
+		}
 
 		err = json.NewEncoder(w).Encode(booking)
 		if err != nil {
@@ -109,6 +117,9 @@ func (a *App) GetBooking(w http.ResponseWriter, r *http.Request) {
 		log.Println("GetBooking 'bookingNumber' is: " + string(key))
 
 		booking, err := a.d.GetBookingByBookingNumber(key)
+		if err != nil {
+			sendErr(w, http.StatusInternalServerError, err.Error())
+		}
 		err = json.NewEncoder(w).Encode(booking)
 		if err != nil {
 			sendErr(w, http.StatusInternalServerError, err.Error())

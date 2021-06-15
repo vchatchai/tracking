@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"tracking/db"
-	"tracking/web"
+
+	"github.com/vchatchai/tracking/server/db"
+	"github.com/vchatchai/tracking/server/web"
 
 	env "github.com/Netflix/go-env"
 )
