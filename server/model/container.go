@@ -8,7 +8,7 @@ type User struct {
 
 type LadenContainer struct {
 	ContainerNo MyNullString `json:"container_no,string"`
-	Size        int          `json:"size"`
+	Size        Int          `json:"size"`
 	Type        MyNullString `json:"type,string"`
 	BookingNo   MyNullString `json:"booking_no,string"`
 	SealNo      MyNullString `json:"seal_no,string"`

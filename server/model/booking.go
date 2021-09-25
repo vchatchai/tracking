@@ -2,7 +2,7 @@ package model
 
 type Booking struct {
 	// Name   MyNullString `json:"name"`
-	// Price  int    `json:"price"`
+	// Price  Int    `json:"price"`
 	// Author MyNullString `json:"author"`
 
 	BookNo           MyNullString `json:"book_no,string"`
@@ -21,18 +21,18 @@ type Booking struct {
 
 type BookingContainerType struct {
 	BookNo    MyNullString `json:"book_no,string"`
-	Size      int          `json:"size"`
+	Size      Int          `json:"size"`
 	Type      MyNullString `json:"type"`
-	Quantity  int          `json:"quantity"`
-	Available int          `json:"available"`
-	TotalOut  int          `json:"total_out"`
+	Quantity  Int          `json:"quantity"`
+	Available Int          `json:"available"`
+	TotalOut  Int          `json:"total_out"`
 }
 
 type BookingContainerDetail struct {
 	BookNo      MyNullString `json:"book_no,string"`
 	No          MyNullString `json:"no"`
 	ContainerNo MyNullString `json:"container_no,string"`
-	Size        int          `json:"size"`
+	Size        Int          `json:"size"`
 	Type        MyNullString `json:"type,string"`
 	SealNo      MyNullString `json:"seal_no,string"`
 	TrailerName MyNullString `json:"trailer_name,string"`
